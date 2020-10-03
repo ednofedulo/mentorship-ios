@@ -32,6 +32,14 @@ struct ProfileEditor: View {
         }
     }
     
+    func isValidForm() -> Bool {
+        guard let name = $editProfileData.name.wrappedValue, name.isEmpty == false else {
+            return false
+        }
+        
+        return true
+    }
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -79,7 +87,7 @@ struct ProfileEditor: View {
                     self.profileViewModel.inActivity = true
                     // make network call to update profile
                     self.updateProfile()
-                })
+                }.disabled(isValidForm() == false))
             .alert(isPresented: $profileViewModel.showAlert) {
                 Alert.init(
                     title: Text(profileViewModel.alertTitle),
