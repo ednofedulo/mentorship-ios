@@ -12,6 +12,13 @@ struct ProfileEditor: View {
     @State var editProfileData = ProfileViewModel().getEditProfileData()
     @ObservedObject var profileViewModel = ProfileViewModel()
     
+    var canSave:Bool {
+        guard let name = $editProfileData.name.wrappedValue, name.isEmpty == false else {
+            return false
+        }
+        return true
+    }
+    
     // make api call to update profile
     func updateProfile() {
         self.profileService.updateProfile(updateProfileData: self.editProfileData) { response in
@@ -30,14 +37,6 @@ struct ProfileEditor: View {
                 self.profileViewModel.alertTitle = LocalizableStringConstants.failure
             }
         }
-    }
-    
-    func isValidForm() -> Bool {
-        guard let name = $editProfileData.name.wrappedValue, name.isEmpty == false else {
-            return false
-        }
-        
-        return true
     }
     
     var body: some View {
@@ -87,7 +86,7 @@ struct ProfileEditor: View {
                     self.profileViewModel.inActivity = true
                     // make network call to update profile
                     self.updateProfile()
-                }.disabled(isValidForm() == false))
+                }.disabled(self.canSave == false))
             .alert(isPresented: $profileViewModel.showAlert) {
                 Alert.init(
                     title: Text(profileViewModel.alertTitle),
