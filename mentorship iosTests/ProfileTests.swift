@@ -14,7 +14,7 @@ class ProfileTests: XCTestCase {
     var urlSession: URLSession!
     
     // MARK: - Setup and Tear Down
-
+    
     override func setUpWithError() throws {
         // Set url session for mock networking
         let configuration = URLSessionConfiguration.ephemeral
@@ -25,7 +25,7 @@ class ProfileTests: XCTestCase {
         // api calls require a token, otherwise tests fail
         try KeychainManager.setToken(username: "", tokenString: "")
     }
-
+    
     override func tearDownWithError() throws {
         urlSession = nil
         try KeychainManager.deleteToken()
@@ -86,7 +86,7 @@ class ProfileTests: XCTestCase {
     
     func testSaveAndGetProfile() {
         let profileVM = ProfileViewModel()
-
+        
         //save sample data
         profileVM.saveProfile(profile: sampleProfileData)
         
@@ -100,7 +100,7 @@ class ProfileTests: XCTestCase {
     
     func testEditProfileDataReceived() {
         let profileVM = ProfileViewModel()
-
+        
         //prepare sample data
         let sampleData = ProfileModel.ProfileData(id: 100, name: nil, username: "username", email: "test@abc.com")
         
@@ -146,6 +146,36 @@ class ProfileTests: XCTestCase {
         
         // Test the profile has been updated
         XCTAssertEqual(profileVM.getProfile().name, "newName")
+    }
+    
+    func testCanSaveProfileWithoutNameAndFail() throws {
+        // Profile Service
+        let profileService: ProfileService = ProfileAPI(urlSession: urlSession)
+        
+        // View Model
+        let sampleData = ProfileModel.ProfileData(id: 0, name: "", username: "", email: "")
+        let profileVM = ProfileViewModel()
+        profileVM.saveProfile(profile: sampleData)
+        
+        // Profile Editor View
+        let profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
+        
+        XCTAssertFalse(profileEditor.canSave)
+    }
+    
+    func testCanSaveProfileWithNameAndSucceed() throws {
+        // Profile Service
+        let profileService: ProfileService = ProfileAPI(urlSession: urlSession)
+        
+        // View Model
+        let sampleData = ProfileModel.ProfileData(id: 0, name: "name", username: "", email: "")
+        let profileVM = ProfileViewModel()
+        profileVM.saveProfile(profile: sampleData)
+        
+        // Profile Editor View
+        let profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
+        
+        XCTAssertTrue(profileEditor.canSave)
     }
     
     // MARK: View Tests (Integration Tests)

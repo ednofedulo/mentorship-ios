@@ -13,10 +13,7 @@ struct ProfileEditor: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
     
     var canSave:Bool {
-        guard let name = $editProfileData.name.wrappedValue, name.isEmpty == false else {
-            return false
-        }
-        return true
+        return (self.editProfileData.name ?? "").isEmpty == false
     }
     
     // make api call to update profile
