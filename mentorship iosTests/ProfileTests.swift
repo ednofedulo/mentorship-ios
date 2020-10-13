@@ -148,33 +148,24 @@ class ProfileTests: XCTestCase {
         XCTAssertEqual(profileVM.getProfile().name, "newName")
     }
     
-    func testCanSaveProfileWithoutNameAndFail() throws {
+    func testSaveButtonDisableState() {
         // Profile Service
         let profileService: ProfileService = ProfileAPI(urlSession: urlSession)
         
         // View Model
-        let sampleData = ProfileModel.ProfileData(id: 0, name: "", username: "", email: "")
+        var sampleData = ProfileModel.ProfileData(id: 0, name: "", username: "", email: "")
         let profileVM = ProfileViewModel()
         profileVM.saveProfile(profile: sampleData)
         
         // Profile Editor View
-        let profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
+        var profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
         
         XCTAssertFalse(profileEditor.canSave)
-    }
-    
-    func testCanSaveProfileWithNameAndSucceed() throws {
-        // Profile Service
-        let profileService: ProfileService = ProfileAPI(urlSession: urlSession)
         
-        // View Model
-        let sampleData = ProfileModel.ProfileData(id: 0, name: "name", username: "", email: "")
-        let profileVM = ProfileViewModel()
+        sampleData =  ProfileModel.ProfileData(id: 0, name: "name", username: "", email: "")
         profileVM.saveProfile(profile: sampleData)
         
-        // Profile Editor View
-        let profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
-        
+        profileEditor = ProfileEditor(profileService: profileService, profileViewModel: profileVM)
         XCTAssertTrue(profileEditor.canSave)
     }
     
